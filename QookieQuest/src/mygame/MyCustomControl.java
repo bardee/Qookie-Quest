@@ -12,7 +12,7 @@ import com.jme3.scene.Spatial;
 
 /**
  *
- * @author mikey
+ * @author mikey ha
  */
 public class MyCustomControl extends RigidBodyControl
         

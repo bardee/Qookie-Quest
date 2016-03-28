@@ -5,6 +5,8 @@
 package mygame;
 
 import com.bulletphysics.dynamics.RigidBody;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -39,6 +41,12 @@ public class Player {
         this.playerNode = new Node();
         this.m = m;
         this.playerCon = new PlayerControl();
+        
+               GhostControl ghost = new GhostControl(
+            new BoxCollisionShape(new Vector3f(1,1,1)));  // a box-shaped ghost
+            Node node = new Node("a ghost-controlled thing");
+            node.addControl(ghost);
+            
         Cylinder c = new Cylinder(32, 32, 1f, 2.5f, true);
         Material playMat = m.makeMaterial("light", ColorRGBA.Yellow);
         Geometry playerG = new Geometry("player", c);
@@ -47,6 +55,10 @@ public class Player {
         playerNode.attachChild(playerG);
         playerNode.setLocalTranslation(-18, 2.2f, 0);
         playerG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
+        
+               node.attachChild(playerNode);
+                m.getRootNode().attachChild(node);
+            
         m.getRootNode().attachChild(playerNode);
         m.applyPhysics(playerG, "rigid", 1000f); //makes player physical
         setControls(); 

@@ -16,6 +16,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.system.AppSettings;
 import java.util.LinkedList;
 
 /**
@@ -33,6 +34,11 @@ public class Main extends SimpleApplication {
         Main app = new Main();
         app.setDisplayStatView(false);
         app.setShowSettings(false);
+        AppSettings settings = new AppSettings(true);
+        //app.setSettings(settings);
+        
+         settings.setResolution(1914,1040);
+         app.setSettings(settings);
         app.start();
     }
 
@@ -60,7 +66,7 @@ public class Main extends SimpleApplication {
     public void initCam() {
         flyCam.setEnabled(true);
         flyCam.setMoveSpeed(10);
-        cam.setLocation(new Vector3f(0, 15f, 50f));
+        cam.setLocation(new Vector3f(0, 15f, 100f));
         cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
     }
 
