@@ -1,34 +1,36 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Cylinder;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
 import java.util.LinkedList;
 
 /**
- * test
  *
- * @author normenhansen
+ *
+ * @author Belcky
  */
 public class Main extends SimpleApplication {
 
-    BulletAppState bullet;
-    public Player player;
+    public static BulletAppState bullet;
+    public static Player player;
     public Level1 lvl1;
+    private LinkedList<Control> physics; //Keeps track of physics applied
+    public static MyCustomControl logic; //Controls the basic logic of the game
+    public AudioNode bgMusic;
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -36,20 +38,23 @@ public class Main extends SimpleApplication {
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         //app.setSettings(settings);
-        
-         settings.setResolution(1914,1040);
-         app.setSettings(settings);
+
+        settings.setResolution(1914, 1040);
+        app.setSettings(settings);
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
         bullet = new BulletAppState(); //initializes bullet engine
+        physics = new LinkedList<Control>();
         stateManager.attach(bullet);
-        lvl1 = new Level1(this, ColorRGBA.Green, 3, 1, 0); //sets up stage
-        player = new Player(this); //creates player
-        initCam();
         initLightandShadow();
+        player = new Player(this); //creates player
+        lvl1 = new Level1(this, ColorRGBA.Green, 3, 1, 0); //sets up stage
+        logic = new MyCustomControl(this, lvl1);
+        stateManager.attach(lvl1);
+        initAudio();
     }
 
     @Override
@@ -63,15 +68,16 @@ public class Main extends SimpleApplication {
     }
 
     /*initializes camera settings*/
-    public void initCam() {
-        flyCam.setEnabled(true);
-        flyCam.setMoveSpeed(10);
-        cam.setLocation(new Vector3f(0, 15f, 100f));
-        cam.lookAt(Vector3f.ZERO, Vector3f.UNIT_Y);
+    public void initCam(boolean enabled, float movSpeed, Vector3f pos, Vector3f look,
+            Vector3f upVec) {
+        flyCam.setEnabled(enabled);
+        flyCam.setMoveSpeed(movSpeed);
+        cam.setLocation(pos);
+        cam.lookAt(look, upVec);
     }
 
     /*creates lighting sources*/
-    private void initLightandShadow() {
+    public void initLightandShadow() {
         // Light1: white, directional
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection((new Vector3f(-0.7f, -15.0f, 0f)).normalizeLocal());
@@ -90,15 +96,62 @@ public class Main extends SimpleApplication {
         viewPort.addProcessor(dlsr);
     }
     
-    /*generates basic physics control*/
-    public void applyPhysics(Geometry obj, String controlType, float mass){
-        if(controlType.equals("rigid")){
-            RigidBodyControl rigidCon = new RigidBodyControl(mass);
-            obj.addControl(rigidCon);
-            bullet.getPhysicsSpace().add(rigidCon);
+    //Creates sounds
+    public void initAudio(){
+         bgMusic = new AudioNode(assetManager, "Sounds/ringydingy.ogg", false);
+        bgMusic.setLooping(true);
+        bgMusic.setPositional(false);
+        bgMusic.setVolume(.5f);
+        rootNode.attachChild(bgMusic);
+        bgMusic.play();
+    }
+
+    /*generates basic physics control and adds to geometry*/
+    public void applyPhysics(Spatial obj, String controlType, float mass) {
+        Control con = null;
+        if (obj != null) {
+            if (controlType.equals("rigid")) {
+                con = new RigidBodyControl(mass);
+                obj.addControl(con);
+                bullet.getPhysicsSpace().add(con);
+            }
+            physics.add(con);
         }
     }
-    
+
+    //adds provided physics control to the physics space
+    public void applyPhysics(Control control) {
+        Control con = null;
+        if (control != null) {
+            if (control instanceof RigidBodyControl) {
+                con = control;
+                bullet.getPhysicsSpace().add(con);
+            }
+            physics.add(con);
+        }
+    }
+
+    /*removes a physical object*/
+    public void removePhysicsOb(Geometry obj) {
+        RigidBodyControl con = obj.getControl(RigidBodyControl.class);
+        physics.remove(con);
+        bullet.getPhysicsSpace().remove(con);
+        obj.removeFromParent();
+    }
+
+    /*Clears out entire physics space*/
+    public void clearPhysicsSpace() {
+        if (physics.size() > 0) {
+            System.out.println("Clearing out physics space");
+            for (Control con : physics) {
+                bullet.getPhysicsSpace().remove(con);
+            }
+            physics.clear();
+        } else {
+            System.out.println("Nothing in Physics space to clear out");
+        }
+    }
+
     /*generates basic material*/
     public Material makeMaterial(String matType, ColorRGBA color) {
         Material mat;
@@ -120,8 +173,15 @@ public class Main extends SimpleApplication {
         return mat;
     }
 
-    /*sets the position of a node*/
-    public void setPosition(Node obj, float x, float y, float z) {
+    /*sets the position of a spatial*/
+    public void setPosition(Spatial obj, float x, float y, float z) {
         obj.setLocalTranslation(x, y, z);
+    }
+
+    /*Deletes specified input mappings*/
+    public void deleteInputMappings(String mappings[]) {
+        for (String i : mappings) {
+            inputManager.deleteMapping(i);
+        }
     }
 }
