@@ -9,6 +9,7 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -16,6 +17,9 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.system.AppSettings;
+import de.lessvoid.nifty.Nifty;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.LinkedList;
 
 /**
@@ -31,15 +35,19 @@ public class Main extends SimpleApplication {
     private LinkedList<Control> physics; //Keeps track of physics applied
     public static MyCustomControl logic; //Controls the basic logic of the game
     public AudioNode bgMusic;
+    public NiftyJmeDisplay niftyDisplay;
+    public Nifty nifty;
 
     public static void main(String[] args) {
         Main app = new Main();
         app.setDisplayStatView(false);
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
-        //app.setSettings(settings);
-
-        settings.setResolution(1914, 1040);
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        screen.width *= 1;
+        screen.height *= 1;
+        settings.setResolution(screen.width, screen.height);
+ 
         app.setSettings(settings);
         app.start();
     }
@@ -49,11 +57,10 @@ public class Main extends SimpleApplication {
         bullet = new BulletAppState(); //initializes bullet engine
         physics = new LinkedList<Control>();
         stateManager.attach(bullet);
+        initGui();
         initLightandShadow();
-        player = new Player(this); //creates player
-        lvl1 = new Level1(this, ColorRGBA.Green, 3, 1, 0); //sets up stage
-        logic = new MyCustomControl(this, lvl1);
-        stateManager.attach(lvl1);
+        MainMenuState mm = new MainMenuState();
+        stateManager.attach(mm);
         initAudio();
     }
 
@@ -74,6 +81,11 @@ public class Main extends SimpleApplication {
         flyCam.setMoveSpeed(movSpeed);
         cam.setLocation(pos);
         cam.lookAt(look, upVec);
+    }
+    
+    public void initGui(){
+        niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
+        nifty = niftyDisplay.getNifty();
     }
 
     /*creates lighting sources*/

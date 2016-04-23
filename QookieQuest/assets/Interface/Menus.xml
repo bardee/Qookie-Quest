@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty-1.3.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty-1.3.xsd http://nifty-gui.sourceforge.net/nifty-1.3.xsd">
+    <useStyles filename="nifty-default-styles.xml" />
+    <useControls filename="nifty-default-controls.xml" />
+    <screen id="Main" controller="mygame.MainMenuState">
+        <layer id="background" childLayout="center">
+            <image filename="Interface/mainBG.png" imageMode="600,5,195,240,600,5,195,30,600,5,195,330" 
+                   width="100%" height="100%"/>
+        </layer>
+        <layer id="foreground" childLayout="vertical" >
+            <panel id="title" childLayout="center" height="40%">
+                <image filename="Interface/logo.png" width="80%" height="100%"
+                       valign="bottom"/>
+            </panel>
+            <panel id="body" childLayout="vertical" width="25%" align="right" height="60%">
+                <panel id ="gap1" childLayout="vertical" height="40%"/>
+                <control name="button" label="Start" id="StartButton" align="center" valign="center"
+                         width="100%" height="10%" visibleToMouse="true"> 
+                    <interact onClick="startGame()"/> 
+                </control>
+                <panel id ="gap2" childLayout="vertical" height="5%"/>
+                <control name="button" label="Levels" id="LevelSelectButton" align="center" valign="center" 
+                         width="100%" height="10%" visibleToMouse="true" > 
+                    <interact onClick="selectLvl()"/>
+                </control>
+                <panel id ="gap3" childLayout="vertical" height="5%"/>
+                <control name="button" label="Exit" id="ExitButton" align="center" valign="center" 
+                         width="100%" height="10%" visibleToMouse="true" > 
+                    <interact onClick="quitGame()"/> 
+                </control>
+            </panel>
+        </layer>
+    </screen>
+    <screen id="LevelSelect" controller="mygame.LevelSelectState">
+        <layer id="background" childLayout="center">
+            <image filename="Interface/lvlBG.png" width="100%" height="100%"/>
+        </layer>
+        <layer id="foreground" childLayout="vertical">
+            <panel id="title" childLayout="center" height="40%">
+                <image filename="Interface/selText.png" width="80%" height="100%"
+                       valign="bottom"/>
+            </panel>
+            <panel id="row_1" childLayout="horizontal" width="100%" height="40%">
+                <image id="lvl_1" filename="Interface/lvlCookie.png"  width="33.3%" visibleToMouse="true" childLayout="center">
+                    <text text="Level 1" font="Interface/Fonts/Default.fnt" width="100%" height="100%" valign= "center" wrap="true" />
+                    <interact onClick="selectLvl(1)"/>
+                </image>
+                <image id="lvl_2" filename="Interface/lvlCookie.png" width="33.3%" visibleToMouse="true" childLayout="center">
+                    <text text="Level 2" font="Interface/Fonts/Default.fnt" width="100%" height="100%" valign= "center" wrap="true" />
+                    <interact onClick="selectLvl(2)"/>
+                </image>
+                <image id="lvl_3" filename="Interface/lvlCookie.png" width="33.3%" visibleToMouse="true" childLayout="center">
+                    <text text="Level 3" font="Interface/Fonts/Default.fnt" width="100%" height="100%" valign= "center" wrap="true" />
+                    <interact onClick="selectLvl(3)"/>               
+                </image>
+            </panel>
+            <panel id="panel_bottom" height="20%" width="75%" align="center" childLayout="horizontal" >
+                <panel id="panel_bottom_left" width="50%" valign="center" childLayout="center">  
+                    <control name="button" label="Return" id="StartButton" align="center" valign="center" 
+                             visibleToMouse="true" width="50%" height="40%"> 
+                        <interact onClick="menuReturn()"/>
+                    </control>
+                </panel>
+                <panel id="panel_bottom_right" width="50%" valign="center" childLayout="center">  
+                    <control name="button" label="Quit" id="QuitButton" align="center" valign="center" 
+                             visibleToMouse="true" width="50%" height="40%"> 
+                        <interact onClick="quitGame()"/>
+                    </control>
+                </panel>
+            </panel>
+        </layer>
+        <layer id="textLayer" childLayout="vertical">
+            <panel id="lvl1Txt" childLayout="center">
+            </panel>
+        </layer>
+    </screen>
+</nifty>
