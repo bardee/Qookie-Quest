@@ -11,6 +11,7 @@ import com.jme3.math.ColorRGBA;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import stagebuilder.Stage;
 
 public class LevelSelectState extends AbstractAppState implements ActionListener, ScreenController {
 
@@ -46,21 +47,23 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
     public void selectLvl(String lvl) {
         //transitioning to the the selected level
         int level = Integer.parseInt(lvl);
-        Level1 lvl1 = null;
+        System.out.println("Level no is " + level);
+        Stage currentSelectedStage = null;
+
         if (level == 1) {
-            lvl1 = new Level1(main, ColorRGBA.Green, level + 1, 1, 0); //sets up stage
+            currentSelectedStage = new Level1(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
         }
         if (level == 2) {
-            lvl1 = new Level1(main, ColorRGBA.Green, level + 1, 1, 0); //sets up stage
+            currentSelectedStage = new Level2(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
         }
         if (level == 3) {
-            lvl1 = new Level1(main, ColorRGBA.Green, level + 1, 1, 0); //sets up stage
+            currentSelectedStage = new Level3(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
         }
         main.player = new Player(main);
-        MyCustomControl logic = new MyCustomControl(main, lvl1);
+        MyCustomControl logic = new MyCustomControl(main, currentSelectedStage);
         AppStateManager asm = main.getStateManager();
         asm.detach(this);
-        asm.attach(lvl1);
+        asm.attach(currentSelectedStage);
 
     }
 

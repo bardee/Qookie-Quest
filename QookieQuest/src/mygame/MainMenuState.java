@@ -48,13 +48,15 @@ public class MainMenuState extends AbstractAppState implements ActionListener, S
         //transitiong to the round state
         System.out.println("Beginning game...");
         Level1 lvl1 = new Level1(main, ColorRGBA.Green, 3, 1, 0); //sets up stage
+//        Level2 myLevelObject = new Level2(main, ColorRGBA.Red, 3, 1, 0);
         main.player = new Player(main);
         MyCustomControl logic = new MyCustomControl(main, lvl1);
+//        MyCustomControl logic = new MyCustomControl(main, myLevelObject);
         main.getFlyByCamera().setDragToRotate(false);
         AppStateManager asm = main.getStateManager();
         asm.detach(this);
         asm.attach(lvl1);
-
+//        asm.attach(myLevelObject);
     }
 
     public void selectLvl() {
@@ -63,7 +65,6 @@ public class MainMenuState extends AbstractAppState implements ActionListener, S
         AppStateManager asm = main.getStateManager();
         asm.detach(this);
         asm.attach(sel);
-
     }
 
     public void quitGame() {

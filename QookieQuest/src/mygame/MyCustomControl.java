@@ -14,6 +14,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import javax.swing.JOptionPane;
 import stagebuilder.Stage;
 
 /**
@@ -48,6 +49,7 @@ public class MyCustomControl implements PhysicsCollisionListener, ActionListener
         }
         if(L.getClear()){
             System.out.println("Moving onto next Stage!");
+            JOptionPane.showMessageDialog(null, "The total score for "+L.toString()+" is "+L.getMaxUserScore());
             System.exit(0);
         }
     }

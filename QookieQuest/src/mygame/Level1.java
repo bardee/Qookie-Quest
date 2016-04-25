@@ -24,6 +24,8 @@ import com.jme3.util.SkyFactory;
  */
 public class Level1 extends Stage {
 
+    private Stage levelClassStageObject;
+    
     public Level1(Main m, ColorRGBA color, int plates, int blocks, int tramps) {
         super(m, color, plates, blocks, tramps);
         setupPlatforms();
@@ -36,6 +38,7 @@ public class Level1 extends Stage {
 
     public Level1(Stage lvl, boolean cleared) {
         super(lvl, cleared);
+        levelClassStageObject = lvl;
         m.initCam(true, 10, new Vector3f(0, 15f, 100f), Vector3f.ZERO, Vector3f.UNIT_Y);
     }
 
@@ -127,5 +130,10 @@ public class Level1 extends Stage {
         m.clearPhysicsSpace(); //Removes all current physics
         m.getRootNode().detachAllChildren();
         System.out.println("Cleaning up level 1...");
+    }
+    
+    @Override
+    public void update(float tpf){
+        totalUserScore += tpf;
     }
 }

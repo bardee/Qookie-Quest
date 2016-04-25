@@ -32,6 +32,7 @@ public class Main extends SimpleApplication {
     public static BulletAppState bullet;
     public static Player player;
     public Level1 lvl1;
+    public Level2 level2Stage;
     private LinkedList<Control> physics; //Keeps track of physics applied
     public static MyCustomControl logic; //Controls the basic logic of the game
     public AudioNode bgMusic;
@@ -61,7 +62,7 @@ public class Main extends SimpleApplication {
         initLightandShadow();
         MainMenuState mm = new MainMenuState();
         stateManager.attach(mm);
-        initAudio();
+       // initAudio();
     }
 
     @Override
@@ -110,7 +111,7 @@ public class Main extends SimpleApplication {
     
     //Creates sounds
     public void initAudio(){
-         bgMusic = new AudioNode(assetManager, "Sounds/ringydingy.ogg", false);
+        bgMusic = new AudioNode(assetManager, "Sounds/ringydingy.ogg", false);
         bgMusic.setLooping(true);
         bgMusic.setPositional(false);
         bgMusic.setVolume(.5f);
