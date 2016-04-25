@@ -136,7 +136,7 @@ public class Maze {
 
         // pick a start point
         int startR = (int) Math.floor(Math.random() * rows);
-        int startC = (int) Math.floor(Math.random() * rows);
+        int startC = (int) Math.floor(Math.random() * columns);
         count = 0;
 
         // and generate

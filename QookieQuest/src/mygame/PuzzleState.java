@@ -13,6 +13,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import maze3d.Maze3D;
 import stagebuilder.Stage;
@@ -57,16 +58,15 @@ public class PuzzleState extends AbstractAppState implements ActionListener, Ana
         if (this.maze != null) {
             maze = this.maze;
         } else {
-            maze = new Maze3D(main, rows, cols, main.makeMaterial("light", ColorRGBA.Magenta),
-                    main.makeMaterial("unshaded", ColorRGBA.Gray));
+            maze = new Maze3D(main, rows, cols, main.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Magenta}),
+                    main.makeMaterial("unshaded", new ColorRGBA[]{ColorRGBA.Gray}));
         }
-        //Centers maze
-        maze.move(new Vector3f(FastMath.floor(cols/2)*-1, 0, (rows)*-1.3f));
         //Sets camera position
-        main.initCam(true, 10, new Vector3f(0,(rows*cols)+rows+1,-1), Vector3f.ZERO,
-            Vector3f.UNIT_Y);
-//        main.initCam(true, 10, new Vector3f(4.844368f, 13.471163f, -0.14066783f), Vector3f.ZERO, Vector3f.UNIT_Z);
-//        main.getCamera().setRotation(new Quaternion(0.003030392f, -0.6750835f, 0.73772985f, 0.0027759746f));
+        Vector3f pos = maze.findCenter();
+        float zoom = (Math.max(rows, cols)*3)/(float)(rows*cols);
+        main.initCam(false, 10, new Vector3f(pos.x, (rows * cols) + rows + 1, pos.z+1), pos,
+                Vector3f.UNIT_Y);
+        main.getCamera().setLocation(new Vector3f(pos.x, ((rows*cols)+rows)*zoom, pos.z));
         //Creates player piece
         initPlayer();
 
@@ -82,7 +82,7 @@ public class PuzzleState extends AbstractAppState implements ActionListener, Ana
     private void initPlayer() {
         Box b = new Box(.3f, .3f, .3f);
         player = new Geometry("player", b);
-        player.setMaterial(main.makeMaterial("unshaded", ColorRGBA.Blue));
+        player.setMaterial(main.makeMaterial("unshaded", new ColorRGBA[]{ColorRGBA.Blue}));
         main.getRootNode().attachChild(player);
         player.setLocalTranslation(1, 0, -.5f);
         main.applyPhysics(player, "rigid", 1);

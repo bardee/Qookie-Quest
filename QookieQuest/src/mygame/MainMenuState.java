@@ -20,13 +20,14 @@ public class MainMenuState extends AbstractAppState implements ActionListener, S
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         this.main = (Main) app;
+        //Inits bgm
+        main.initBGM("Sounds/funkyangels.ogg");
 
         //Keys
         InputManager inputManager = main.getInputManager();
         inputManager.addMapping("StartRound", new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addListener(this, newMappings = new String[]{"StartRound"});
         main.nifty.fromXml("Interface/Menus.xml", "Main", this);
-// nifty.fromXml("Interface/helloworld.xml", "start", new MySettingsScreen(data));
 // attach the Nifty display to the gui view port as a processor
         main.getGuiViewPort().addProcessor(main.niftyDisplay);
         main.getFlyByCamera().setDragToRotate(true);

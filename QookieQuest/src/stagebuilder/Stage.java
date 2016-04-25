@@ -40,6 +40,7 @@ public abstract class Stage extends AbstractAppState {
     public static final boolean withoutKey = false;
     public boolean key = withoutKey; //Checks if player collected keys
     protected int mazeSize[] = new int[2];
+    protected Cookie c;
 
     public Stage(Main m, ColorRGBA groundColor) {
         this.m = m;
@@ -73,6 +74,7 @@ public abstract class Stage extends AbstractAppState {
         doorNode = new Node();
         cleared = false;
         makeGround(groundColor);
+        setcook();
     }
 
     //Used for loading up previous state of the stage
@@ -96,7 +98,7 @@ public abstract class Stage extends AbstractAppState {
         //Creates and attaches the geometry for the ground
         Box ground = new Box(20, 1, 5);
         Geometry groundG = new Geometry("ground", ground);
-        Material groundMat = m.makeMaterial("light", color);
+        Material groundMat = m.makeMaterial("light", new ColorRGBA[]{color});
         groundG.setMaterial(groundMat);
         groundG.setShadowMode(RenderQueue.ShadowMode.Receive);
         groundNode.setName("groundNode");
@@ -202,6 +204,16 @@ public abstract class Stage extends AbstractAppState {
             }
         }
         lastState = null;
+    }
+    
+    protected void setKeys(){
+        
+    }
+    
+    protected void setcook(){
+        c = new Cookie(m);
+        c.setLocalTranslation(0, 5, 0);
+        m.applyPhysics(c, "ghost", 5);
     }
 
     public abstract void setupDoor();

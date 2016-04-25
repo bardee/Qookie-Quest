@@ -25,13 +25,14 @@ import java.util.LinkedList;
 import mygame.Main;
 
 public class Maze3D {
-
+    
     protected Main m;
     protected Maze mazeData; //The 2d maze data
     protected Node mazeNode; //The 3d maze;
     protected int rows, cols;
     protected Material wallMat, floorMat;
     protected Geometry geomLarge, geomSmall, geomGround;
+    protected Vector3f center = null;
 
     //Empty 3D Maze constructor. Used for wanting to build new maze manually
     public Maze3D(Main m) {
@@ -47,7 +48,7 @@ public class Maze3D {
         this.mazeNode = new Node();
         this.wallMat = wallMat;
         this.floorMat = floorMat;
-
+        
         if (rows >= 2) {
             this.rows = rows;
         }
@@ -66,7 +67,7 @@ public class Maze3D {
         this.wallMat = wallMat;
         this.floorMat = floorMat;
         mazeNode.setName("mazeNode");
-
+        
         String data = maze.toString();
         for (int i = 0; i < data.length(); i++) {
             if (data.charAt(i) == ' ') {
@@ -77,7 +78,7 @@ public class Maze3D {
             }
         }
         cols /= rows;
-
+        
         buildMaze(rows, cols);
         mazeNode.move(0f, 4f, 0f);
     }
@@ -87,8 +88,8 @@ public class Maze3D {
         Box eastBorder, southBorder, f;
         Geometry eastb, southb, floor;
         MazeCell cell;
-        int r = 0, c = 0;
-
+        int r = 0, c = 0, count = 1;
+        
         for (r = 0; r < rows; r++) {
             for (c = 0; c < cols; c++) {
                 cell = new MazeCell(mazeData, wallMat, r, c);
@@ -97,6 +98,8 @@ public class Maze3D {
                     for (Spatial walls : cell.getChildren()) {
                         m.applyPhysics((Geometry) walls, "rigid", 0); // Applies the physics
                     }
+                    cell.setName("cell_" + count); //Names the cell
+                    count++;
                 }
             }
         }
@@ -107,52 +110,58 @@ public class Maze3D {
         eastb.setLocalTranslation(cols * 2f, 0f, rows - .5f);
         mazeNode.attachChild(eastb);
         m.applyPhysics(eastb, "rigid", 0);
-
+        
         southBorder = new Box((cols - 1) + .5f, 1f, .5f);
         southb = new Geometry("Southwall", southBorder);
         southb.setMaterial(wallMat);
         southb.setLocalTranslation(cols - 1, 0f, (rows * 2f) - .5f);
         mazeNode.attachChild(southb);
         m.applyPhysics(southb, "rigid", 0);
-
+        
         f = new Box(cols + .5f, .25f, rows + .5f);
         floor = new Geometry("floor", f);
         floor.setMaterial(floorMat);
         floor.setLocalTranslation(cols, -1.25f, rows - .5f);
         mazeNode.attachChild(floor);
         m.applyPhysics(floor, "rigid", 0);
-
+        
         m.getRootNode().attachChild(mazeNode);
     }
-
+    
+    public Vector3f findCenter() {
+        center = new Vector3f((cols+.5f)/2f, .25f/2f, (rows+5f)/2f);
+        center.add(mazeNode.getChild("floor").getWorldTranslation());
+        return center;
+    }
+    
     public Node getMazeNode() {
         return mazeNode;
     }
-
+    
     public int getRows() {
         return rows;
     }
-
+    
     public void setRows(int rows) {
         this.rows = rows;
     }
-
+    
     public int getCols() {
         return cols;
     }
-
+    
     public void setCols(int cols) {
         this.cols = cols;
     }
-
+    
     public void setWallMat(Material wallMat) {
         this.wallMat = wallMat;
     }
-
+    
     public void setFloorMat(Material floorMat) {
         this.floorMat = floorMat;
     }
-
+    
     public void move(Vector3f position) {
         RigidBodyControl con = null;
         for (Spatial child : mazeNode.getChildren()) {

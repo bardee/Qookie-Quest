@@ -3,6 +3,8 @@ package mygame;
 import com.jme3.app.SimpleApplication;
 import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
@@ -40,14 +42,14 @@ public class Main extends SimpleApplication {
 
     public static void main(String[] args) {
         Main app = new Main();
-        app.setDisplayStatView(false);
+        //app.setDisplayStatView(false);
         app.setShowSettings(false);
         AppSettings settings = new AppSettings(true);
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         screen.width *= 1;
         screen.height *= 1;
         settings.setResolution(screen.width, screen.height);
- 
+
         app.setSettings(settings);
         app.start();
     }
@@ -61,7 +63,6 @@ public class Main extends SimpleApplication {
         initLightandShadow();
         MainMenuState mm = new MainMenuState();
         stateManager.attach(mm);
-        initAudio();
     }
 
     @Override
@@ -82,8 +83,8 @@ public class Main extends SimpleApplication {
         cam.setLocation(pos);
         cam.lookAt(look, upVec);
     }
-    
-    public void initGui(){
+
+    public void initGui() {
         niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
         nifty = niftyDisplay.getNifty();
     }
@@ -107,10 +108,10 @@ public class Main extends SimpleApplication {
         dlsr.setLight(sun);
         viewPort.addProcessor(dlsr);
     }
-    
+
     //Creates sounds
-    public void initAudio(){
-         bgMusic = new AudioNode(assetManager, "Sounds/ringydingy.ogg", false);
+    public void initBGM(String filename) {
+        bgMusic = new AudioNode(assetManager, filename, false);
         bgMusic.setLooping(true);
         bgMusic.setPositional(false);
         bgMusic.setVolume(.5f);
@@ -124,6 +125,13 @@ public class Main extends SimpleApplication {
         if (obj != null) {
             if (controlType.equals("rigid")) {
                 con = new RigidBodyControl(mass);
+                obj.addControl(con);
+                bullet.getPhysicsSpace().add(con);
+            }
+            if (controlType.equals("ghost")) {
+                SphereCollisionShape sphereShape =
+                        new SphereCollisionShape(mass);
+                con = new GhostControl(sphereShape);
                 obj.addControl(con);
                 bullet.getPhysicsSpace().add(con);
             }
@@ -144,8 +152,8 @@ public class Main extends SimpleApplication {
     }
 
     /*removes a physical object*/
-    public void removePhysicsOb(Geometry obj) {
-        RigidBodyControl con = obj.getControl(RigidBodyControl.class);
+    public void removePhysicsOb(Spatial obj) {
+        Control con = obj.getControl(0);
         physics.remove(con);
         bullet.getPhysicsSpace().remove(con);
         obj.removeFromParent();
@@ -165,17 +173,17 @@ public class Main extends SimpleApplication {
     }
 
     /*generates basic material*/
-    public Material makeMaterial(String matType, ColorRGBA color) {
+    public Material makeMaterial(String matType, ColorRGBA color[]) {
         Material mat;
         if (matType.equals("unshaded")) {
             matType = "Common/MatDefs/Misc/Unshaded.j3md";
             mat = new Material(assetManager, matType);
-            mat.setColor("Color", color);
+            mat.setColor("Color", color[0]);
         } else if (matType.equals("light")) {
             matType = "Common/MatDefs/Light/Lighting.j3md";
             mat = new Material(assetManager, matType);
             mat.setBoolean("UseMaterialColors", true);
-            mat.setColor("Ambient", color);
+            mat.setColor("Ambient", color[0]);
             mat.setColor("Diffuse", ColorRGBA.White);
             mat.setColor("Specular", ColorRGBA.Yellow);
             mat.setFloat("Shininess", 10f);

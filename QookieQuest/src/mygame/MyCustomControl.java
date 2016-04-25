@@ -37,7 +37,7 @@ public class MyCustomControl implements PhysicsCollisionListener, ActionListener
     }
 
     public void collision(PhysicsCollisionEvent event) {
-        if (checkNodeCollide("player", "block", event)) {
+        if (checkNodeCollide("player", "cookie", event)) {
             obtainKey(event);
         }
         if (compareDistance(main.player.playerNode.getChild(0),
@@ -90,8 +90,8 @@ public class MyCustomControl implements PhysicsCollisionListener, ActionListener
 
     //attempts to gain the keys
     private void obtainKey(PhysicsCollisionEvent event) {
-        Spatial node = checkSingleNodeCollide("block", event);
-        main.getRootNode().detachChild(L.getBlockNodes()[0]);
+        Spatial node = checkSingleNodeCollide("cookie", event);
+        main.removePhysicsOb(node);
         L.key = L.withKey;
         System.out.println("Player has the key");
     }
@@ -100,9 +100,7 @@ public class MyCustomControl implements PhysicsCollisionListener, ActionListener
     private void tryOpenDoor() {
         doAction = IDLE;
         if (L.key == L.withKey) {
-            System.out.println("Player exit");
-            System.exit(0);
-        } else {
+        
             AppStateManager asm = main.getStateManager();
             main.deleteInputMappings(mappings);
             asm.detach(L);

@@ -1,0 +1,13 @@
+Material CookieMat : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Textures/cookietexture01.jpg
+        Shininess : 10.0
+        Diffuse : 1.0 1.0 1.0 1.0
+        Ambient : 1.0 1.0 1.0 1.0
+        Specular : 1.0 1.0 0.49411765 1
+        UseMaterialColors : true
+        UseAlpha : true
+     }
+    AdditionalRenderState {
+    }
+}

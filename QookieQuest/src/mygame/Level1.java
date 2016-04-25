@@ -31,7 +31,7 @@ public class Level1 extends Stage {
         setupDoor();
         setBackground("Textures/cookies.jpg");
         m.initCam(true, 10, new Vector3f(0, 15f, 100f), Vector3f.ZERO, Vector3f.UNIT_Y);
-        setMazeSize(3, 3);
+        setMazeSize(2, 2); // Creates the maze
     }
 
     public Level1(Stage lvl, boolean cleared) {
@@ -43,14 +43,16 @@ public class Level1 extends Stage {
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
         load();
+        m.bgMusic.stop();
+        m.initBGM("Sounds/ringydingy.ogg");
         System.out.println("Entering level 1...");
     }
 
     @Override
     public void setupPlatforms() {
         Box platform = new Box(3, .25f, 5);
-        Material mat1 = m.makeMaterial("light", ColorRGBA.Red);
-        Material mat2 = m.makeMaterial("light", ColorRGBA.Blue);
+        Material mat1 = m.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Red});
+        Material mat2 = m.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Blue});
 
         //Creates and attaches the platform geometries
         Geometry[] platsG = new Geometry[NUMPLATFORMS];
@@ -85,7 +87,7 @@ public class Level1 extends Stage {
         //Creates and attaches block geometries
         Box block = new Box(1f, 1f, 1f);
         Geometry blockG = new Geometry("block_1", block);
-        Material blockMat = m.makeMaterial("light", ColorRGBA.Cyan);
+        Material blockMat = m.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Cyan});
         blockG.setMaterial(blockMat);
         blockG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         blockNodes[0] = new Node();
@@ -106,9 +108,9 @@ public class Level1 extends Stage {
     @Override
     public void setupDoor() {
         //Creates door geometry and attaches it
-        Box door = new Box(2f, 5f, 1f);
+        Box door = new Box(2f, 5f, 2.5f);
         Geometry doorG = new Geometry("door", door);
-        Material blockMat = m.makeMaterial("light", ColorRGBA.Magenta);
+        Material blockMat = m.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Magenta});
         doorG.setMaterial(blockMat);
         doorG.setShadowMode(RenderQueue.ShadowMode.CastAndReceive);
         doorNode.setName("doorNode");

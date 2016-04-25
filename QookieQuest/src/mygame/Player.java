@@ -42,7 +42,7 @@ public class Player {
         this.m = m;
         this.playerCon = new PlayerControl();
         Cylinder c = new Cylinder(32, 32, 1f, 2.5f, true);
-        Material playMat = m.makeMaterial("light", ColorRGBA.Yellow);
+        Material playMat = m.makeMaterial("light", new ColorRGBA[]{ColorRGBA.Yellow});
         Geometry playerG = new Geometry("player", c);
         playerG.rotate(FastMath.HALF_PI, 0, 0);
         playerG.setMaterial(playMat);
