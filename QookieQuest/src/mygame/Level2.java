@@ -189,6 +189,7 @@ public class Level2 extends Stage {
         saveState(); //Stores the current state
         m.clearPhysicsSpace(); //Removes all current physics
         m.getRootNode().detachAllChildren();
+        m.deleteInputMappings(newMappings);
         System.out.println("Cleaning up level 2...");
     }
 

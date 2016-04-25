@@ -204,4 +204,8 @@ public class Main extends SimpleApplication {
             inputManager.deleteMapping(i);
         }
     }
+    
+    public AppSettings getAppSettings(){
+        return this.settings;
+    }
 }

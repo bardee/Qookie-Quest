@@ -100,7 +100,6 @@ public class MyCustomControl implements PhysicsCollisionListener, ActionListener
     private void tryOpenDoor() {
         doAction = IDLE;
         if (L.key == L.withKey) {
-        
             AppStateManager asm = main.getStateManager();
             main.deleteInputMappings(mappings);
             asm.detach(L);

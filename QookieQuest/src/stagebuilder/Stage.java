@@ -1,7 +1,11 @@
 package stagebuilder;
 
 import com.jme3.app.state.AbstractAppState;
+import com.jme3.app.state.AppStateManager;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -13,6 +17,7 @@ import com.jme3.scene.shape.Box;
 import com.jme3.util.SkyFactory;
 import java.util.List;
 import mygame.Main;
+import mygame.PauseState;
 
 /**
  *
@@ -22,7 +27,7 @@ import mygame.Main;
 /*Abstract for creating level stages. Sets up basic basic level features such as
  * ground, platforms, obstacles, and exit
  */
-public abstract class Stage extends AbstractAppState {
+public abstract class Stage extends AbstractAppState implements ActionListener {
 
     protected Main m;
     protected int NUMPLATFORMS;
@@ -35,12 +40,13 @@ public abstract class Stage extends AbstractAppState {
     protected Node[] trampolineNodes;
     protected Spatial sky;
     protected Spatial[] lastState;
-    protected boolean cleared;  
-    public static final boolean withKey = true; 
+    protected boolean cleared;
+    public static final boolean withKey = true;
     public static final boolean withoutKey = false;
     public boolean key = withoutKey; //Checks if player collected keys
     protected int mazeSize[] = new int[2];
     protected Cookie c;
+    protected String newMappings[];
 
     public Stage(Main m, ColorRGBA groundColor) {
         this.m = m;
@@ -54,6 +60,7 @@ public abstract class Stage extends AbstractAppState {
         trampolineNodes = new Node[1];
         cleared = false;
         makeGround(groundColor);
+        initKeys();
     }
 
     public Stage(Main m, ColorRGBA groundColor, int numPlats, int numBlocks, int numTrampos) {
@@ -74,6 +81,7 @@ public abstract class Stage extends AbstractAppState {
         doorNode = new Node();
         cleared = false;
         makeGround(groundColor);
+        this.initKeys();
         setcook();
     }
 
@@ -92,6 +100,7 @@ public abstract class Stage extends AbstractAppState {
         this.mazeSize = lvl.mazeSize;
         this.lastState = lvl.lastState;
         this.cleared = clear;
+        this.initKeys();
     }
 
     protected void makeGround(ColorRGBA color) {
@@ -155,11 +164,12 @@ public abstract class Stage extends AbstractAppState {
     public Spatial getSky() {
         return sky;
     }
-    public boolean getClear(){
+
+    public boolean getClear() {
         return cleared;
     }
-    
-    public int[] getMazeSize(){
+
+    public int[] getMazeSize() {
         return mazeSize;
     }
 
@@ -169,8 +179,8 @@ public abstract class Stage extends AbstractAppState {
                 m.getAssetManager(), image, true);
         m.getRootNode().attachChild(sky);
     }
-    
-    public void setMazeSize(int rows, int cols){
+
+    public void setMazeSize(int rows, int cols) {
         mazeSize[0] = rows;
         mazeSize[1] = cols;
     }
@@ -205,15 +215,28 @@ public abstract class Stage extends AbstractAppState {
         }
         lastState = null;
     }
-    
-    protected void setKeys(){
-        
+
+    protected void setKeys() {
     }
-    
-    protected void setcook(){
+
+    protected void setcook() {
         c = new Cookie(m);
         c.setLocalTranslation(0, 5, 0);
         m.applyPhysics(c, "ghost", 5);
+    }
+
+    public void initKeys() {
+        m.getInputManager().addMapping("Pause", new KeyTrigger(KeyInput.KEY_P));
+        m.getInputManager().addListener(this, newMappings =new String[]{"Pause"});
+    }
+
+    public void onAction(String name, boolean isPressed, float tpf) {
+        if (name.equals("Pause") && isPressed) {
+            PauseState pause = new PauseState(this);
+            AppStateManager asm = m.getStateManager();
+            asm.detach(this);
+            asm.attach(pause);
+        }
     }
 
     public abstract void setupDoor();
