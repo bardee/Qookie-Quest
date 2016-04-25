@@ -31,7 +31,7 @@ public class Level1 extends Stage {
         setupDoor();
         setBackground("Textures/cookies.jpg");
         m.initCam(true, 10, new Vector3f(0, 15f, 100f), Vector3f.ZERO, Vector3f.UNIT_Y);
-        setMazeSize(2, 2); // Creates the maze
+        setMazeSize(3, 3); // Creates the maze
     }
 
     public Level1(Stage lvl, boolean cleared) {

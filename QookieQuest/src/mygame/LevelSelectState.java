@@ -11,6 +11,7 @@ import com.jme3.math.ColorRGBA;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
+import stagebuilder.Stage;
 
 public class LevelSelectState extends AbstractAppState implements ActionListener, ScreenController {
 
@@ -20,14 +21,13 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         this.main = (Main) app;
-        //Inits bgm
-        main.initBGM("Sounds/funkyangels.ogg");
 
         //Keys
         InputManager inputManager = main.getInputManager();
         inputManager.addMapping("StartRound", new KeyTrigger(KeyInput.KEY_RETURN));
         inputManager.addListener(this, newMappings = new String[]{"StartRound"});
-        main.nifty.fromXml("Interface/Menus.xml", "Main", this);
+        main.nifty.fromXml("Interface/Menus.xml", "LevelSelect", this);
+// nifty.fromXml("Interface/helloworld.xml", "start", new MySettingsScreen(data));
 // attach the Nifty display to the gui view port as a processor
         main.getGuiViewPort().addProcessor(main.niftyDisplay);
         main.getFlyByCamera().setDragToRotate(true);
@@ -41,30 +41,37 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
     public void onAction(String name, boolean isPressed, float tpf) {
         if (name.equals("StartRound") && isPressed) {
             //transition to the round state
-            startGame();
         }
     }
 
-    public void startGame() {
-        //transitiong to the round state
-        System.out.println("Beginning game...");
-        Level1 lvl1 = new Level1(main, ColorRGBA.Green, 3, 1, 0); //sets up stage
+    public void selectLvl(String lvl) {
+        //transitioning to the the selected level
+        int level = Integer.parseInt(lvl);
+        System.out.println("Level no is " + level);
+        Stage currentSelectedStage = null;
+
+        if (level == 1) {
+            currentSelectedStage = new Level1(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
+        }
+        if (level == 2) {
+            currentSelectedStage = new Level2(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
+        }
+        if (level == 3) {
+            currentSelectedStage = new Level3(main, ColorRGBA.Green, level + 1, level + 1, 0); //sets up stage
+        }
         main.player = new Player(main);
-        MyCustomControl logic = new MyCustomControl(main, lvl1);
-        main.getFlyByCamera().setDragToRotate(false);
+        MyCustomControl logic = new MyCustomControl(main, currentSelectedStage);
         AppStateManager asm = main.getStateManager();
         asm.detach(this);
-        asm.attach(lvl1);
+        asm.attach(currentSelectedStage);
 
     }
 
-    public void selectLvl() {
-        //transitiong to the level select screen
-        LevelSelectState sel = new LevelSelectState();
+    public void menuReturn() {
+        MainMenuState menu = new MainMenuState();
         AppStateManager asm = main.getStateManager();
         asm.detach(this);
-        asm.attach(sel);
-
+        asm.attach(menu);
     }
 
     public void quitGame() {
@@ -74,7 +81,7 @@ public class LevelSelectState extends AbstractAppState implements ActionListener
 
     @Override
     public void cleanup() {
-        System.out.println("cleaning up main menu screen...");
+        System.out.println("cleaning up level select screen...");
         main.getGuiViewPort().removeProcessor(main.niftyDisplay);
         main.deleteInputMappings(newMappings);
     }
